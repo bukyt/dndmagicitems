@@ -1,3 +1,4 @@
 # dndmagicitems
 dnd maagiliste esemete jaoks andmebaasi
-https://gitmind.com/app/docs/mytwvaac
+Link: https://gitmind.com/app/docs/mytwvaac
+Password: 7497
