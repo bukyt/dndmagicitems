@@ -4,7 +4,7 @@ Link: https://gitmind.com/app/docs/mytwvaac
 Password: 7497
 
 
-Relatsioonid ja reeglid:\n
+Relatsioonid ja reeglid:
 Generaatoris asub nimetatud itemid, millele on antud enda id, efekti id ja baas itemi id
 
 RELVAD:
