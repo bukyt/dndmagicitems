@@ -48,5 +48,11 @@ hind - hind mis lisada baas itemi hinnale
 omadused - kirjeldab mis teeb
 täring - HEAL ja DMG puhul palju formaadis xdy+mod {x-mitu,y-kui suur, mod-kui palju baas enne täringu veeretust}
 
+=============================================================================
 
+EELGENEREERITUD:
+Id - igale oma
+NIMI - ühendab efekti ja baasitemi nime
+Item Id - baas itemi id
+Efekt Id - baas efekti id
 
