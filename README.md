@@ -57,3 +57,6 @@ NIMI - ühendab efekti ja baasitemi nime
 Item Id - baas itemi id
 Efekt Id - baas efekti id
 
+
+
+Tuleb teha selgeks kuidas genereerimine käib, eelgenereeritud on need millest efektid saadud, ühendatud tüübid.
