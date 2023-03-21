@@ -99,4 +99,4 @@ Efekt Id - baas efekti id
 
 
 
-Tuleb teha selgeks kuidas genereerimine käib, eelgenereeritud on need millest efektid saadud, ühendatud tüübid.
+Tuleb teha selgeks kuidas genereerimine käib, eelgenereeritud on need millest efektid saadud, ühendatud tüübid, genereeritud itemitele vahetabel kus baas item mitte baas relv vms.
