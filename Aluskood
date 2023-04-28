@@ -73,19 +73,6 @@ ALTER TABLE Genereeritud_Esemed ADD CONSTRAINT Genereeritud_Esemed_fk0 FOREIGN K
 ALTER TABLE Genereeritud_Esemed ADD CONSTRAINT Genereeritud_Esemed_fk1 FOREIGN KEY (Baas_Ese) REFERENCES Esemed(Nimi);
 ----------------------------------------------------------------------------------------------------------------------
 
-INSERT INTO Esemed(Nimi) VALUES ('Potion of Wonder');
-
-INSERT INTO	Kasutatavad(Hind, Kasutusi, Võimendus, Ala, nimi) 
-VALUES (100, 5, 1, 50, 'Potion of Wonder');
-
-INSERT INTO Esemed(Nimi) VALUES ('Potion of Cure Ailments');
-INSERT INTO Kasutatavad(Hind, Kasutusi, Võimendus, Ala, nimi)
-VALUES(100,1,1,1,'Potion of Cure Ailments');
-
-INSERT INTO Esemed(Nimi) VALUES ('Padded Light Armor');
-INSERT INTO turvised(hind, kaal, ac, kaalu_klass, stealth, nimi) VALUES (5, 8, 11, 'Light Armor', TRUE, 'Padded Light Armor');
-
-
 CREATE OR REPLACE PROCEDURE sp_lisaArmor(a_hind integer, a_kaal integer, a_ac integer, a_kaaluKlass varchar(20), a_stealth boolean, a_nimi varchar(100))
 LANGUAGE plpgsql
 AS $$
@@ -94,5 +81,65 @@ AS $$
 		INSERT INTO turvised(hind, kaal, ac, kaalu_klass, stealth, nimi) VALUES (a_hind, a_kaal, a_ac, a_kaaluKlass, a_stealth, a_nimi);
 	END;
 $$;
-	
-CALL sp_lisaArmor(10, 10, 11, 'Light Armor', TRUE, 'Leather Light Armor');
+
+CREATE OR REPLACE PROCEDURE sp_lisaRelv(r_dmgType varchar(255), r_hind integer, r_omadused varchar(255), r_skill varchar(255), r_kategooria varchar(255), r_ulatus varchar(255), r_dmg varchar(255), r_nimi varchar(255))
+LANGUAGE plpgsql
+AS $$
+	BEGIN
+		INSERT INTO Esemed(Nimi) VALUES (r_nimi);
+		INSERT INTO relvad(dmg_type, hind, omadused, skill, kategooria, ulatus, dmg, nimi) VALUES (r_dmgType, r_hind, r_omadused, r_skill, r_kategooria, r_ulatus, r_dmg, r_nimi);
+	END;
+$$;
+
+CREATE OR REPLACE PROCEDURE sp_lisaKasutatav(k_hind integer, k_kasutusi integer, k_võimendus integer, k_ala integer, k_nimi varchar(255))
+LANGUAGE plpgsql
+AS $$
+	BEGIN
+		INSERT INTO Esemed(Nimi) VALUES (k_nimi);
+		INSERT INTO kasutatavad(hind, kasutusi, võimendus, ala, nimi) VALUES (k_hind, k_kasutusi, k_võimendus, k_ala, k_nimi);
+	END;
+$$;	
+
+CREATE OR REPLACE PROCEDURE sp_lisaMuudEsemed(m_hind integer, m_tüüp varchar(225), m_omadused varchar(225), m_nimi varchar(255))
+LANGUAGE plpgsql
+AS $$
+	BEGIN
+		INSERT INTO Esemed(Nimi) VALUES (m_nimi);
+		INSERT INTO muud_esemed(hind, tüüp, omadused, nimi) VALUES (m_hind, m_tüüp, m_omadused, m_nimi);
+	END;
+$$;
+------------------------------------------------------------------------------------------------------Etapp1----Callima peab yxhaaval---------------
+CALL sp_lisaArmor(5, 8, 11, 'Light', TRUE, 'Padded Armor');
+CALL sp_lisaArmor(10, 10, 11, 'Light', TRUE, 'Leather Armor');
+CALL sp_lisaArmor(45, 13, 12, 'Light', TRUE, 'Studded Leather Armor');
+CALL sp_lisaArmor(10, 12, 12, 'Medium', TRUE, 'Hide Armor');
+CALL sp_lisaArmor(50, 20, 13, 'Medium', TRUE, 'Chain Armor');
+CALL sp_lisaArmor(50, 45, 14, 'Medium', FALSE, 'Scale Mail');
+CALL sp_lisaArmor(400, 20, 14, 'Medium', TRUE, 'Breastplate');
+CALL sp_lisaArmor(750, 40, 15, 'Medium', FALSE, 'Half Plate');
+CALL sp_lisaArmor(30, 40, 14, 'Heavy', FALSE, 'Ring Mail');
+CALL sp_lisaArmor(75, 55, 16, 'Heavy', FALSE, 'Chain Mail');
+CALL sp_lisaArmor(200, 60, 17, 'Heavy', FALSE, 'Splint Mail');
+CALL sp_lisaArmor(1500, 65, 18, 'Heavy', FALSE, 'Plate Armor');
+CALL sp_lisaArmor(10, 6, 2, 'Heavy', FALSE, 'Shield');
+
+CALL sp_lisaRelv('bludgeoning', 1, 'Just a simple club', 'no skill', 'Light', '0', '1d4', 'Club');
+CALL sp_lisaRelv('piercing', 2, 'Just a simple dagger', 'no skill', 'Finesse,light,thrown', '20/60', '1d4', 'Dagger');
+CALL sp_lisaRelv('slashing', 10, 'Just a very big axe', 'no skill', 'Versatile(1d10)', 'melee', '1d8', 'Battleaxe');
+CALL sp_lisaRelv('slashing', 50, 'Just a very big sword', 'no skill', 'Heavy, two-handed', 'melee', '2d6', 'Greatsword');
+CALL sp_lisaRelv('slashing', 15, 'Normal length sword', 'no skill', 'Versatile(1d10)', 'melee', '1d8', 'Longsword');
+CALL sp_lisaRelv('slashing', 20, 'Just a long weapon', 'no skill', 'Heavy,reach,two-handed', 'melee', '1d10', 'Halberd');
+CALL sp_lisaRelv('piercing', 50, 'Large bow', 'no skill', 'Heavy,two-handed', '150/600', '1d8', 'Longbow');
+CALL sp_lisaRelv('slashing', 20000, 'A blade forged from Mount Olympus, this weapon can slay titans, but requires the might of a god',
+					'If you hit a Huge or larger creature with this magic greatsword, you deal an extra 2d6 damage.',
+					'Heavy,reach,two-handed', 'melee', '1d10', 'Blade of Olympus');
+		
+CALL sp_lisakasutatav(100, 5, 1, 50, 'Potion of Wonder');
+CALL sp_lisaKasutatav(100, 1, 1, 1, 'Potion of Cure Ailments')	
+CALL sp_lisaKasutatav(30, 1, 10, 20, 'Potion of Cure Light Wounds')				
+
+CALL sp_lisaMuudEsemed(1576, 'Belt', 'STR+4', 'Heavy Belt');
+				
+INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Tulelöök', 'Fire', 1000, '2d6', 'Fire Burst engulfs from weapon');
+INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Välgulöök', 'Lightning', 1000, '2d6', 'Lightning Burst engulfs from weapon');
+INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Jäälöök', 'Cold', 1000, '2d6', 'Cold Burst engulfs from weapon');
