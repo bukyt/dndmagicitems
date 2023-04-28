@@ -1,0 +1,98 @@
+CREATE TABLE Relvad (
+	id serial NOT NULL,
+	DMG_type VARCHAR(255) NOT NULL DEFAULT 'sls',
+	Hind integer NOT NULL DEFAULT '0',
+	Omadused VARCHAR(255),
+	Skill VARCHAR(255) DEFAULT 'DEX',
+	Kategooria varchar(255) NOT NULL DEFAULT 'S',
+	Ulatus VARCHAR(255),
+	DMG VARCHAR(255) NOT NULL DEFAULT '1d6',
+	nimi VARCHAR(255) NOT NULL UNIQUE,
+	CONSTRAINT Relvad_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE Kasutatavad (
+	id serial NOT NULL,
+	Hind integer NOT NULL DEFAULT '0',
+	Kasutusi integer DEFAULT '1',
+	Võimendus integer NOT NULL DEFAULT '1',
+	Ala integer,
+	nimi VARCHAR(255) NOT NULL UNIQUE,
+	CONSTRAINT Kasutatavad_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE Muud_Esemed (
+	id serial NOT NULL,
+	Hind integer NOT NULL,
+	Tüüp VARCHAR(255) NOT NULL,
+	Omadused VARCHAR(255),
+	nimi VARCHAR(255) NOT NULL UNIQUE,
+	CONSTRAINT Muud_Esemed_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE Turvised (
+	id serial NOT NULL,
+	Hind integer NOT NULL DEFAULT '0',
+	Kaal integer NOT NULL DEFAULT '0',
+	AC integer NOT NULL DEFAULT '0',
+	Kaalu_Klass VARCHAR(255) NOT NULL DEFAULT 'HEAVY',
+	Stealth BOOLEAN NOT NULL DEFAULT 'true',
+	nimi VARCHAR(255) NOT NULL UNIQUE,
+	CONSTRAINT Turvised_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE Efektid (
+	id serial NOT NULL,
+	Nimi VARCHAR(255) NOT NULL UNIQUE,
+	Tüüp VARCHAR(255),
+	Hind integer,
+	Täring VARCHAR(255),
+	Seletus VARCHAR(255) NOT NULL,
+	CONSTRAINT Efektid_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE Genereeritud_Esemed (
+	id serial NOT NULL,
+	Baas_efekt VARCHAR(255) NOT NULL,
+	Baas_Ese VARCHAR(255) NOT NULL UNIQUE,
+	CONSTRAINT Genereeritud_Esemed_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE Esemed (
+	id serial NOT NULL,
+	Nimi VARCHAR(255) NOT NULL UNIQUE,
+	CONSTRAINT Esemed_pk PRIMARY KEY (id)
+);
+
+ALTER TABLE Relvad ADD CONSTRAINT Relvad_fk0 FOREIGN KEY (nimi) REFERENCES Esemed(Nimi);
+ALTER TABLE Kasutatavad ADD CONSTRAINT Kasutatavad_fk0 FOREIGN KEY (nimi) REFERENCES Esemed(Nimi);
+ALTER TABLE Muud_Esemed ADD CONSTRAINT Muud_Esemed_fk0 FOREIGN KEY (nimi) REFERENCES Esemed(Nimi);
+ALTER TABLE Turvised ADD CONSTRAINT Turvised_fk0 FOREIGN KEY (nimi) REFERENCES Esemed(Nimi);
+
+ALTER TABLE Genereeritud_Esemed ADD CONSTRAINT Genereeritud_Esemed_fk0 FOREIGN KEY (Baas_efekt) REFERENCES Efektid(Nimi);
+ALTER TABLE Genereeritud_Esemed ADD CONSTRAINT Genereeritud_Esemed_fk1 FOREIGN KEY (Baas_Ese) REFERENCES Esemed(Nimi);
+----------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO Esemed(Nimi) VALUES ('Potion of Wonder');
+
+INSERT INTO	Kasutatavad(Hind, Kasutusi, Võimendus, Ala, nimi) 
+VALUES (100, 5, 1, 50, 'Potion of Wonder');
+
+INSERT INTO Esemed(Nimi) VALUES ('Potion of Cure Ailments');
+INSERT INTO Kasutatavad(Hind, Kasutusi, Võimendus, Ala, nimi)
+VALUES(100,1,1,1,'Potion of Cure Ailments');
+
+INSERT INTO Esemed(Nimi) VALUES ('Padded Light Armor');
+INSERT INTO turvised(hind, kaal, ac, kaalu_klass, stealth, nimi) VALUES (5, 8, 11, 'Light Armor', TRUE, 'Padded Light Armor');
+
+
+CREATE OR REPLACE PROCEDURE sp_lisaArmor(a_hind integer, a_kaal integer, a_ac integer, a_kaaluKlass varchar(20), a_stealth boolean, a_nimi varchar(100))
+LANGUAGE plpgsql
+AS $$
+	BEGIN
+		INSERT INTO Esemed(Nimi) VALUES (a_nimi);
+		INSERT INTO turvised(hind, kaal, ac, kaalu_klass, stealth, nimi) VALUES (a_hind, a_kaal, a_ac, a_kaaluKlass, a_stealth, a_nimi);
+	END;
+$$;
+	
+CALL sp_lisaArmor(10, 10, 11, 'Light Armor', TRUE, 'Leather Light Armor');
