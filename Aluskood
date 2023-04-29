@@ -1,7 +1,7 @@
-CREATE or replace TABLE Relvad (
+CREATE TABLE Relvad (
 	id serial NOT null unique,
 	DMG_type VARCHAR(255) NOT NULL DEFAULT 'sls',
-	Hind dec(2) NOT NULL DEFAULT '0',
+	Hind NUMERIC NOT NULL DEFAULT 0,
 	Omadused VARCHAR(255),
 	Skill VARCHAR(255) DEFAULT 'DEX',
 	Kategooria varchar(255) NOT NULL DEFAULT 'Simple',
@@ -13,7 +13,7 @@ CREATE or replace TABLE Relvad (
 
 CREATE TABLE Kasutatavad (
 	id serial NOT null unique,
-	Hind integer NOT NULL DEFAULT '0',
+	Hind NUMERIC NOT NULL DEFAULT 0,
 	Kasutusi integer DEFAULT '1',
 	Võimendus integer NOT NULL DEFAULT '1',
 	Ala integer,
@@ -23,7 +23,7 @@ CREATE TABLE Kasutatavad (
 
 CREATE TABLE Muud_Esemed (
 	id serial NOT null unique,
-	Hind integer NOT NULL,
+	Hind NUMERIC NOT NULL DEFAULT 0,
 	Tüüp VARCHAR(255) NOT NULL,
 	Omadused VARCHAR(255),
 	nimi VARCHAR(255) NOT NULL UNIQUE,
@@ -32,7 +32,7 @@ CREATE TABLE Muud_Esemed (
 
 CREATE TABLE Turvised (
 	id serial NOT null unique,
-	Hind integer NOT NULL DEFAULT '0',
+	Hind NUMERIC NOT NULL DEFAULT 0,
 	Kaal integer NOT NULL DEFAULT '0',
 	AC integer NOT NULL DEFAULT '0',
 	Kaalu_Klass VARCHAR(255) NOT NULL DEFAULT 'HEAVY',
@@ -45,7 +45,7 @@ CREATE TABLE Efektid (
 	id serial NOT null unique,
 	Nimi VARCHAR(255) NOT NULL UNIQUE,
 	Tüüp VARCHAR(255),
-	Hind integer,
+	Hind NUMERIC NOT NULL DEFAULT 0,
 	Täring VARCHAR(255),
 	Seletus VARCHAR(255) NOT NULL,
 	CONSTRAINT Efektid_pk PRIMARY KEY (id)
@@ -65,6 +65,8 @@ CREATE TABLE Esemed (
 	CONSTRAINT Esemed_pk PRIMARY KEY (id)
 );
 
+alter table relvad add column kaal int default 1;
+
 ALTER TABLE Relvad ADD CONSTRAINT Relvad_fk0 FOREIGN KEY (nimi) REFERENCES Esemed(Nimi);
 ALTER TABLE Kasutatavad ADD CONSTRAINT Kasutatavad_fk0 FOREIGN KEY (nimi) REFERENCES Esemed(Nimi);
 ALTER TABLE Muud_Esemed ADD CONSTRAINT Muud_Esemed_fk0 FOREIGN KEY (nimi) REFERENCES Esemed(Nimi);
@@ -74,7 +76,7 @@ ALTER TABLE Genereeritud_Esemed ADD CONSTRAINT Genereeritud_Esemed_fk0 FOREIGN K
 ALTER TABLE Genereeritud_Esemed ADD CONSTRAINT Genereeritud_Esemed_fk1 FOREIGN KEY (Baas_Ese) REFERENCES Esemed(Nimi);
 ----------------------------------------------------------------------------------------------------------------------
 
-CREATE OR REPLACE PROCEDURE sp_lisaArmor(a_hind integer, a_kaal integer, a_ac integer, a_kaaluKlass varchar(20), a_stealth boolean, a_nimi varchar(100))
+CREATE OR REPLACE PROCEDURE sp_lisaArmor(a_hind NUMERIC, a_kaal integer, a_ac integer, a_kaaluKlass varchar(20), a_stealth boolean, a_nimi varchar(100))
 LANGUAGE plpgsql
 AS $$
 	begin
@@ -88,7 +90,7 @@ AS $$
 	END;
 $$;
 
-CREATE OR REPLACE PROCEDURE sp_lisaRelv(r_dmgType varchar(255), r_hind integer, r_omadused varchar(255), r_skill varchar(255), r_kategooria varchar(255), r_ulatus varchar(255), r_dmg varchar(255), r_nimi varchar(255), r_kaal integer)
+CREATE OR REPLACE PROCEDURE sp_lisaRelv(r_dmgType varchar(255), r_hind NUMERIC, r_omadused varchar(255), r_skill varchar(255), r_kategooria varchar(255), r_ulatus varchar(255), r_dmg varchar(255), r_nimi varchar(255), r_kaal integer)
 LANGUAGE plpgsql
 AS $$
 	begin
@@ -102,7 +104,7 @@ AS $$
 	END;
 $$;
 
-CREATE OR REPLACE PROCEDURE sp_lisaKasutatav(k_hind integer, k_kasutusi integer, k_võimendus integer, k_ala integer, k_nimi varchar(255))
+CREATE OR REPLACE PROCEDURE sp_lisaKasutatav(k_hind NUMERIC, k_kasutusi integer, k_võimendus integer, k_ala integer, k_nimi varchar(255))
 LANGUAGE plpgsql
 AS $$
 	begin
@@ -116,7 +118,7 @@ AS $$
 	END;
 $$;	
 
-CREATE OR REPLACE PROCEDURE sp_lisaMuudEsemed(m_hind integer, m_tüüp varchar(225), m_omadused varchar(225), m_nimi varchar(255))
+CREATE OR REPLACE PROCEDURE sp_lisaMuudEsemed(m_hind NUMERIC, m_tüüp varchar(225), m_omadused varchar(225), m_nimi varchar(255))
 LANGUAGE plpgsql
 AS $$
 	begin
@@ -147,10 +149,10 @@ CALL sp_lisaArmor(10, 6, 2, 'Heavy', FALSE, 'Shield');
 CALL sp_lisaRelv('bludgeoning', 1, 'Light', 'STR', 'Simple', 'melee', '1d4', 'Club',2);
 CALL sp_lisaRelv('piercing', 2, 'Finesse,light,thrown', 'DEX,STR', 'Simple', '20/60', '1d4', 'Dagger',1);
 CALL sp_lisaRelv('slashing', 10, 'Versatile(1d10)', 'STR', 'Martial', 'melee', '1d8', 'Battleaxe',4);
-CALL sp_lisaRelv('slashing', 50, 'Heavy, two-handed', 'STR', 'Simple', 'melee', '2d6', 'Greatsword');
-CALL sp_lisaRelv('slashing', 15, 'Versatile(1d10)', 'DEX,STR', 'Martial', 'melee', '1d8', 'Longsword');
-CALL sp_lisaRelv('slashing', 20, 'Heavy,reach,two-handed', 'STR', 'Martial', 'melee', '1d10', 'Halberd');
-CALL sp_lisaRelv('piercing', 50, 'Heavy,two-handed,ammunition', 'DEX', 'Martial', '150/600', '1d8', 'Longbow');
+CALL sp_lisaRelv('slashing', 50, 'Heavy, two-handed', 'STR', 'Simple', 'melee', '2d6', 'Greatsword',6);
+CALL sp_lisaRelv('slashing', 15, 'Versatile(1d10)', 'DEX,STR', 'Martial', 'melee', '1d8', 'Longsword',3);
+CALL sp_lisaRelv('slashing', 20, 'Heavy,reach,two-handed', 'STR', 'Martial', 'melee', '1d10', 'Halberd',6);
+CALL sp_lisaRelv('piercing', 50, 'Heavy,two-handed,ammunition', 'DEX', 'Martial', '150/600', '1d8', 'Longbow',2);
 
 		
 CALL sp_lisakasutatav(100, 5, 1, 50, 'Potion of Wonder');
@@ -163,10 +165,9 @@ INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Tulelöök',
 INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Välgulöök', 'Lightning', 1000, '2d6', 'Lightning Burst engulfs from weapon');
 INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Jäälöök', 'Cold', 1000, '2d6', 'Cold Burst engulfs from weapon');
 
-alter table relvad add column kaal int default 1;
-
-select* from relvad;
+select * from relvad;
 select * from genereeritud_esemed ge;
 select * from kasutatavad;
 select * from muud_esemed;
-select*from turvised;
+select * from turvised;
+select * from efektid;
