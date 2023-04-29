@@ -131,6 +131,20 @@ AS $$
 		end if;
 	END;
 $$;
+
+create or replace procedure sp_looMaagilineEse(ese_nimi varchar(255), effekt_nimi varchar(255))
+language plpgsql
+as $$
+	begin
+		insert into genereeritud_esemed(nimi,baas_efekt,baas_ese) values(
+		ese_nimi || ' of ' ||effekt_nimi,
+		effekt_nimi,
+		ese_nimi
+		);
+	end;
+$$;
+drop procedure sp_loomaagilineese(varchar, varchar);
+	
 ------------------------------------------------------------------------------------------------------Etapp1----Callima peab yxhaaval---------------
 CALL sp_lisaArmor(5, 8, 11, 'Light', TRUE, 'Padded Armor');
 CALL sp_lisaArmor(10, 10, 11, 'Light', TRUE, 'Leather Armor');
@@ -160,6 +174,8 @@ CALL sp_lisaKasutatav(100, 1, 1, 1, 'Potion of Cure Ailments');
 CALL sp_lisaKasutatav(30, 1, 10, 20, 'Potion of Cure Light Wounds');				
 
 CALL sp_lisaMuudEsemed(1576, 'Belt', 'STR+4', 'Heavy Belt');
+
+call sp_loomaagilineese('Club','Tulelöök') 
 				
 INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Tulelöök', 'Fire', 1000, '2d6', 'Fire Burst engulfs from weapon');
 INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Välgulöök', 'Lightning', 1000, '2d6', 'Lightning Burst engulfs from weapon');
@@ -171,3 +187,4 @@ select * from kasutatavad;
 select * from muud_esemed;
 select * from turvised;
 select * from efektid;
+select * from esemed;
