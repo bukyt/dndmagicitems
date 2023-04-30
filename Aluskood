@@ -144,6 +144,19 @@ as $$
 	end;
 $$;
 drop procedure sp_loomaagilineese(varchar, varchar);
+
+CREATE OR REPLACE PROCEDURE sp_lisaEfekt(e_nimi varchar(225), e_tüüp varchar(225), e_hind NUMERIC, e_täring varchar(255), e_seletus varchar(255))
+LANGUAGE plpgsql
+AS $$
+	begin
+		if exists(select id from efektid where nimi=e_nimi) then 
+			update efektid set hind=e_hind, tüüp=e_tüüp, täring=e_täring, seletus=e_seletus
+			where nimi=e_nimi;
+		else
+			INSERT INTO efektid(nimi,tüüp,hind,täring,seletus) VALUES (e_nimi,e_tüüp,e_hind,e_täring,e_seletus);
+		end if;
+	END;
+$$;
 	
 ------------------------------------------------------------------------------------------------------Etapp1----Callima peab yxhaaval---------------
 CALL sp_lisaArmor(5, 8, 11, 'Light', TRUE, 'Padded Armor');
@@ -160,19 +173,9 @@ CALL sp_lisaArmor(200, 60, 17, 'Heavy', FALSE, 'Splint Mail');
 CALL sp_lisaArmor(1500, 65, 18, 'Heavy', FALSE, 'Plate Armor');
 CALL sp_lisaArmor(10, 6, 2, 'Heavy', FALSE, 'Shield');
 
-CALL sp_lisaRelv('bludgeoning', 1, 'Light', 'STR', 'Simple', 'melee', '1d4', 'Club',2);
-CALL sp_lisaRelv('piercing', 2, 'Finesse,light,thrown', 'DEX,STR', 'Simple', '20/60', '1d4', 'Dagger',1);
-CALL sp_lisaRelv('slashing', 10, 'Versatile(1d10)', 'STR', 'Martial', 'melee', '1d8', 'Battleaxe',4);
-CALL sp_lisaRelv('slashing', 50, 'Heavy, two-handed', 'STR', 'Simple', 'melee', '2d6', 'Greatsword',6);
-CALL sp_lisaRelv('slashing', 15, 'Versatile(1d10)', 'DEX,STR', 'Martial', 'melee', '1d8', 'Longsword',3);
-CALL sp_lisaRelv('slashing', 20, 'Heavy,reach,two-handed', 'STR', 'Martial', 'melee', '1d10', 'Halberd',6);
-CALL sp_lisaRelv('piercing', 50, 'Heavy,two-handed,ammunition', 'DEX', 'Martial', '150/600', '1d8', 'Longbow',2);
-
-		
 CALL sp_lisakasutatav(100, 5, 1, 50, 'Potion of Wonder');
 CALL sp_lisaKasutatav(100, 1, 1, 1, 'Potion of Cure Ailments');	
-CALL sp_lisaKasutatav(30, 1, 10, 20, 'Potion of Cure Light Wounds');				
-
+CALL sp_lisaKasutatav(30, 1, 10, 20, 'Potion of Cure Light Wounds');
 CALL sp_lisaMuudEsemed(1576, 'Belt', 'STR+4', 'Heavy Belt');
 
 call sp_loomaagilineese('Club','Tulelöök') 
@@ -180,6 +183,17 @@ call sp_loomaagilineese('Club','Tulelöök')
 INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Tulelöök', 'Fire', 1000, '2d6', 'Fire Burst engulfs from weapon');
 INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Välgulöök', 'Lightning', 1000, '2d6', 'Lightning Burst engulfs from weapon');
 INSERT INTO efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Jäälöök', 'Cold', 1000, '2d6', 'Cold Burst engulfs from weapon');
+insert into efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Giant Strength', 'Buff STR', 1000, '1', 'This item empowers the user with extra strength');
+insert into efektid (nimi, tüüp, hind, täring, seletus) VALUES ('Giant Strength', 'Buff STR', 1000, '1', 'This item empowers the user with extra strength');
+call sp_lisaEfekt('Adamantine','Buff',250,'1','The user of this has immunity to critical bonus damage');
+call sp_lisaEfekt('Animate','Buff',7500,'1','When the user speaks a command as a bonus action this item animates, for 1 minute, until you use a bonus action to end this effect, or until you are incapacitated or die the item remains animated and works as if the user is wielding it.');
+call sp_lisaEfekt('+1','Buff',500,'1','This item has a plus 1 to all appropriate properties, rolls and saves');
+call sp_lisaEfekt('+2','Buff',5000,'2','This item has a plus 2 to all appropriate properties, rolls and saves');
+call sp_lisaEfekt('+3','Buff',50000,'3','This item has a plus 3 to all appropriate properties, rolls and saves');
+call sp_lisaEfekt('Arrow-Catching','Buff',2500,'2','While wielding this item, the user has a +2 AC against all ranged attacks. In addition, whenever an attacker makes a ranged attack against a target within 5 feet of you, you can use your reaction to become the target of the attack instead.');
+
+
+
 
 select * from relvad;
 select * from genereeritud_esemed ge;
@@ -188,3 +202,46 @@ select * from muud_esemed;
 select * from turvised;
 select * from efektid;
 select * from esemed;
+
+
+CALL sp_lisaRelv('bludgeoning', 0.1, 'light', 'STR', 'Simple', 'melee', '1d4', 'Club',2);
+CALL sp_lisaRelv('piercing', 2, 'finesse, light, thrown(range 20/60)', 'STR/DEX', 'Simple', 'melee', '1d4', 'Dagger',1);
+CALL sp_lisaRelv('bludgeoning', 0.2, 'two-handed', 'STR', 'Simple', 'melee', '1d8', 'Greatclub',10);
+CALL sp_lisaRelv('slashing', 5, 'light, thrown(range 20/60)', 'STR', 'Simple', 'melee', '1d6', 'Handaxe',2);
+CALL sp_lisaRelv('piercing', 0.5, 'thrown(range 30/120)', 'STR', 'Simple', 'melee', '1d6', 'Javelin',2);
+CALL sp_lisaRelv('bludgeoning', 2, 'light, thrown(range 20/60)', 'STR', 'Simple', 'melee', '1d4', 'Light hammer',2);
+CALL sp_lisaRelv('bludgeoning', 2, '-', 'STR', 'Simple', 'melee', '1d4', 'Mace',4);
+CALL sp_lisaRelv('bludgeoning', 0.2, 'versatile(1d8)', 'STR', 'Simple', 'melee', '1d6', 'Quarterstaff',4);
+CALL sp_lisaRelv('slashing', 1, 'light', 'STR', 'Simple', 'melee', '1d4', 'Sickle',2);
+CALL sp_lisaRelv('piercing', 1, 'thrown(range 20/60), versatile(1d8)', 'STR', 'Simple', 'melee', '1d6', 'Spear',3);
+
+CALL sp_lisaRelv('piercing', 25, 'ammunition, loading, two-handed', 'DEX', 'Simple', '80/320', '1d8', 'Light Crossbow',5);
+CALL sp_lisaRelv('piercing', 0.05, 'finesse, thrown(range 20/60)', 'DEX', 'Simple', '20/60', '1d4', 'Dart',1);
+CALL sp_lisaRelv('piercing', 25, 'ammunition, two-handed', 'DEX', 'Simple', '80/320', '1d6', 'Shortbow',2);
+CALL sp_lisaRelv('bludgeoning', 0.1, 'ammunition', 'DEX', 'Simple', '30/120', '1d4', 'Sling',0);
+
+CALL sp_lisaRelv('piercing', 10, 'ammunition, loading', 'DEX', 'Martial', '25/100', '1d1', 'Blowgun',1);
+CALL sp_lisaRelv('piercing', 75, 'ammunition, light, loading', 'DEX', 'Martial', '30/120', '1d6', 'Hand Crossbow',3);
+CALL sp_lisaRelv('piercing', 50, 'ammunition, heavy, loading, two-handed', 'DEX', 'Martial', '100/400', '1d10', 'Heavy Crossbow',18);
+CALL sp_lisaRelv('piercing', 50, 'ammunition, heavy, two-handed', 'DEX', 'Martial', '150/600', '1d8', 'Longbow',2);
+CALL sp_lisaRelv('none', 1, 'special, thrown(range 5/15)', 'DEX', 'Martial', 'melee', '0d0', 'Net',3);
+
+CALL sp_lisaRelv('slashing', 10, 'versatile(1d10)', 'STR', 'Martial', 'melee', '1d8', 'Battleaxe',4);
+CALL sp_lisaRelv('bludgeoning', 10, '-', 'STR', 'Martial', 'melee', '1d8', 'Flail',2);
+CALL sp_lisaRelv('slashing', 20, 'heavy, reach, two-handed', 'STR', 'Martial', 'melee', '1d10', 'Glaive',6);
+CALL sp_lisaRelv('slashing', 30, 'heavy, two-handed', 'STR', 'Martial', 'melee', '1d12', 'Greataxe',7);
+CALL sp_lisaRelv('slashing', 50, 'heavy, two-handed', 'STR', 'Martial', 'melee', '2d6', 'Greatsword',6);
+CALL sp_lisaRelv('slashing', 20, 'heavy, reach, two-handed', 'STR', 'Martial', 'melee', '1d10', 'Halberd',6);
+CALL sp_lisaRelv('piercing', 10, 'reach, special', 'STR', 'Martial', 'melee', '1d12', 'Lance',6);
+CALL sp_lisaRelv('slashing', 15, 'Versatile(1d10)', 'STR', 'Martial', 'melee', '1d8', 'Longsword',3);
+CALL sp_lisaRelv('bludgeoning', 10, 'heavy, two-handed', 'STR', 'Martial', 'melee', '2d6', 'Maul',10);
+CALL sp_lisaRelv('piercing', 15, '-', 'STR', 'Martial', 'melee', '1d8', 'Morningstar',4);
+CALL sp_lisaRelv('piercing', 5, 'heavy, reach, two-handed', 'STR', 'Martial', 'melee', '1d10', 'Pike',18);
+CALL sp_lisaRelv('piercing', 25, 'finesse', 'STR/DEX', 'Martial', 'melee', '1d8', 'Rapier',2);
+CALL sp_lisaRelv('slashing', 25, 'finesse, light', 'STR/DEX', 'Martial', 'melee', '1d6', 'Scimitar',3);
+CALL sp_lisaRelv('piercing', 10, 'finesse, light', 'STR/DEX', 'Martial', 'melee', '1d6', 'Shortsword',2);
+CALL sp_lisaRelv('piercing', 5, 'thrown(range 20/60), versatile(1d8)', 'STR', 'Martial', 'melee', '1d6', 'Trident',4);
+CALL sp_lisaRelv('piercing', 5, '-', 'STR', 'Martial', 'melee', '1d8', 'War pick',2);
+CALL sp_lisaRelv('bludgeoning', 15, 'versatile(1d10)', 'STR', 'Martial', 'melee', '1d8', 'Warhammer',2);
+CALL sp_lisaRelv('slashing', 2, 'finesse, reach', 'STR/DEX', 'Martial', 'melee', '1d4', 'Whip',3);
+
