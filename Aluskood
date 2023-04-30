@@ -245,3 +245,5 @@ CALL sp_lisaRelv('piercing', 5, '-', 'STR', 'Martial', 'melee', '1d8', 'War pick
 CALL sp_lisaRelv('bludgeoning', 15, 'versatile(1d10)', 'STR', 'Martial', 'melee', '1d8', 'Warhammer',2);
 CALL sp_lisaRelv('slashing', 2, 'finesse, reach', 'STR/DEX', 'Martial', 'melee', '1d4', 'Whip',3);
 
+select * from relvad where 
+relvad.nimi=(select baas_ese from genereeritud_esemed where id=2);
