@@ -132,19 +132,6 @@ AS $$
 	END;
 $$;
 
-create or replace procedure sp_looMaagilineEse(ese_nimi varchar(255), effekt_nimi varchar(255))
-language plpgsql
-as $$
-	begin
-		insert into genereeritud_esemed(nimi,baas_efekt,baas_ese) values(
-		ese_nimi || ' of ' ||effekt_nimi,
-		effekt_nimi,
-		ese_nimi
-		);
-	end;
-$$;
-drop procedure sp_loomaagilineese(varchar, varchar);
-
 CREATE OR REPLACE PROCEDURE sp_lisaEfekt(e_nimi varchar(225), e_tüüp varchar(225), e_hind NUMERIC, e_täring varchar(255), e_seletus varchar(255))
 LANGUAGE plpgsql
 AS $$
@@ -157,8 +144,65 @@ AS $$
 		end if;
 	END;
 $$;
+
+create or replace procedure sp_looMaagilineEse(ese_nimi varchar(255), effekt_nimi varchar(255))
+language plpgsql
+as $$
+	begin
+		insert into genereeritud_esemed(nimi,baas_efekt,baas_ese) values(
+		ese_nimi || ' of ' ||effekt_nimi,
+		effekt_nimi,
+		ese_nimi
+		);
+	end;
+$$;
+--drop procedure sp_loomaagilineese(varchar, varchar);
+
+
+create or replace procedure sp_looMaagilineEseKontrolliga(ese_nimi varchar(255), effekt_nimi varchar(255))
+language plpgsql
+as $$
+	DECLARE ese_max integer;
+	DECLARE effekt_max integer;
+	BEGIN
+		SELECT count(*) FROM esemed WHERE nimi=ese_nimi INTO ese_max;
+		SELECT count(*) FROM efektid WHERE nimi=effekt_nimi INTO effekt_max;
+		
+		IF ese_max > 0 AND effekt_max > 0
+			THEN
+				insert into genereeritud_esemed(nimi,baas_efekt,baas_ese) values(
+				ese_nimi || ' of ' ||effekt_nimi,
+				effekt_nimi,
+				ese_nimi
+			);
+			ELSE
+				RAISE NOTICE 'Antud sisendid ei vasta andmebaasis olevatele elementidele';		
+		END IF;
+	end;
+$$;
+
+CREATE OR REPLACE PROCEDURE sp_genereeriEseRandom()
+LANGUAGE plpgsql
+AS $$
+	DECLARE valik_ese integer;
+	DECLARE valik_effekt integer;
+	DECLARE ese_nimi varchar(255);
+	DECLARE effekt_nimi varchar(255);
 	
-------------------------------------------------------------------------------------------------------Etapp1----Callima peab yxhaaval---------------
+	BEGIN
+		valik_ese = FLOOR(random()*((SELECT count(*) FROM esemed)-0+1));
+		valik_effekt = FLOOR(random()*((SELECT count(*) FROM efektid)-0+1));
+		SELECT esemed.nimi FROM esemed WHERE esemed.id = valik_ese INTO ese_nimi;
+		SELECT efektid.nimi FROM efektid WHERE efektid.id = valik_effekt INTO effekt_nimi;		
+	
+		insert into genereeritud_esemed(nimi,baas_efekt,baas_ese) values(
+		ese_nimi || ' of ' || effekt_nimi,
+		effekt_nimi,
+		ese_nimi
+		);
+	END;
+$$;
+------------------------------------------------------------------------------------------------------Tabelite ja protseduuride loomine----Callima edasi peab eraldi---------------
 CALL sp_lisaArmor(5, 8, 11, 'Light', TRUE, 'Padded Armor');
 CALL sp_lisaArmor(10, 10, 11, 'Light', TRUE, 'Leather Armor');
 CALL sp_lisaArmor(45, 13, 12, 'Light', TRUE, 'Studded Leather Armor');
