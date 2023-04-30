@@ -66,6 +66,13 @@ AC - baas ac ilma dex lisamiseta
 
 stealth - {true,false} näitab itemi disadvantagi
 
+=============================================================================
+
+ESEMED
+
+Id- igale esemele id
+
+Nimi- iga eseme nimi
 
 =============================================================================
 
@@ -92,9 +99,9 @@ Id - igale oma
 
 NIMI - ühendab efekti ja baasitemi nime
 
-Item Id - baas itemi id
+Item Id - baas itemi nimi
 
-Efekt Id - baas efekti id
+Efekt Id - baas efekti nimi
 
 
 
