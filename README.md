@@ -75,7 +75,7 @@ Id - igale oma
 
 nimi - efekti nimi
 
-tüüp - {BUFF,DMG,DEBUFF,UTILITY,HEAL}
+tüüp - annab mingi idee mis effekt teeb üldisemalt
 
 hind - hind mis lisada baas itemi hinnale
 
