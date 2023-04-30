@@ -47,7 +47,7 @@ Id - igale oma
 
 tüüp - asja nimi
 
-hind - vaskmüntides positiivne integer (10 cp= 1 sp, 10 sp = 1 gp)
+hind - vaskmüntides positiivne numeric (10 cp= 1 sp, 10 sp = 1 gp) ehk hind 1 kuld 1 hõbe 1 vask on 1.11
 
 omadused - {wearable,held} kas riideese v midagi muud
 
@@ -58,7 +58,7 @@ TURVISED:
 
 Id- igale oma
 
-hind - vaskmüntides positiivne integer (10 cp= 1 sp, 10 sp = 1 gp)
+hind - vaskmüntides positiivne numeric (10 cp= 1 sp, 10 sp = 1 gp) ehk hind 1 kuld 1 hõbe 1 vask on 1.11
 
 raskus - {heavy,medium,light}
 
